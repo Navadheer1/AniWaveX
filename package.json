@@ -1,0 +1,21 @@
+{
+  "name": "aniwavex",
+  "version": "1.0.0",
+  "description": "AniWaveX - Modern Anime Streaming Frontend",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l $PORT .",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "anime",
+    "streaming",
+    "jikan-api",
+    "frontend"
+  ],
+  "author": "Navadheer1",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
