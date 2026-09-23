@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Details - AniWaveX Streaming</title>
+  <meta name="description" content="View synopsis, episodes, character voice cast, and stream in full HD on AniWaveX.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/details.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff640a'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z'/></svg>">
+</head>
+<body>
+
+  <!-- ========================================================================
+       NAVBAR
+       ======================================================================== -->
+  <header class="site-header scrolled">
+    <div class="container navbar">
+      <a href="index.html" class="brand-logo" aria-label="AniWaveX Homepage">
+        <span class="brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        </span>
+        Ani<span class="accent">WaveX</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="browse.html" class="nav-link">Browse</a></li>
+        <li><a href="browse.html?sort=popular" class="nav-link">Popular</a></li>
+        <li><a href="browse.html?sort=recent" class="nav-link">New Releases</a></li>
+      </ul>
+
+      <div class="nav-search-container">
+        <div class="search-input-wrapper">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" class="site-search-input" placeholder="Search anime..." autocomplete="off">
+        </div>
+        <div class="search-results-dropdown"></div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="browse.html?watchlist=true" class="watchlist-nav-btn" title="View Watchlist">
+          <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+          <span class="watchlist-badge" style="display: none;">0</span>
+        </a>
+
+        <div class="nav-guest-actions" style="display: flex; gap: 10px;">
+          <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
+          <a href="signup.html" class="btn btn-primary btn-sm">Sign Up</a>
+        </div>
+
+        <div class="nav-user-actions user-menu-wrapper" style="display: none;">
+          <button class="user-avatar-btn" id="userAvatarBtn" aria-label="User profile">
+            <div class="avatar-circle">U</div>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="user-dropdown-header">
+              <div class="username">OtakuPrime</div>
+              <div class="user-email">demo@aniwavex.com</div>
+            </div>
+            <a href="browse.html?watchlist=true" class="user-dropdown-item">My Watchlist</a>
+            <a href="#" class="user-dropdown-item logout logout-trigger">Sign Out</a>
+          </div>
+        </div>
+
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-nav-drawer" id="mobileDrawer">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="browse.html" class="nav-link">Browse Catalog</a>
+    <a href="browse.html?watchlist=true" class="nav-link">My Watchlist</a>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+      <a href="login.html" class="btn btn-secondary" style="width: 100%;">Log In</a>
+      <a href="signup.html" class="btn btn-primary" style="width: 100%;">Create Account</a>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       DETAILS HERO SECTION
+       ======================================================================== -->
+  <main>
+    <section class="details-hero">
+      <img id="detailsBackdrop" class="details-backdrop-img" src="" alt="Backdrop">
+      <div class="details-backdrop-overlay"></div>
+
+      <div class="container details-hero-container">
+        <!-- Poster -->
+        <div class="details-poster-wrap">
+          <img id="detailsPoster" class="details-poster-img" src="" alt="Poster">
+        </div>
+
+        <!-- Info Column -->
+        <div class="details-info-col">
+          <div class="details-badge-row">
+            <span class="badge-featured" id="detailsType">TV Series</span>
+            <span class="badge-subdub" id="detailsAudio">Sub | Dub</span>
+            <span class="badge-subdub" id="detailsEpCount">24 Episodes</span>
+          </div>
+
+          <h1 id="detailsTitle" class="details-title">Loading...</h1>
+          <div id="detailsJpTitle" class="details-jp-title">日本語</div>
+
+          <div class="details-meta-bar">
+            <div class="details-meta-item rating">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              <span id="detailsRating">4.9</span>
+              <span id="detailsRatingCount" style="color: var(--text-muted); font-size: 0.82rem; font-weight: normal;">(0 reviews)</span>
+            </div>
+            <div class="details-meta-item">
+              <span id="detailsYear">2024</span>
+            </div>
+            <div class="details-meta-item">
+              <span id="specStudio">Studio</span>
+            </div>
+          </div>
+
+          <!-- Genres Tags -->
+          <div id="detailsGenres" class="details-genres"></div>
+
+          <!-- Actions Bar -->
+          <div class="details-actions-bar">
+            <a id="watchNowBtn" href="watch.html" class="btn btn-primary btn-lg">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              Watch Episode 1
+            </a>
+            <button id="watchlistToggleBtn" class="btn btn-secondary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+              <span class="btn-text">Add to Watchlist</span>
+            </button>
+            <button id="likeToggleBtn" class="action-icon-btn" title="Like anime">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         DETAILS BODY & EPISODES
+         ======================================================================== -->
+    <div class="container details-content-body">
+      <!-- Synopsis Section -->
+      <section>
+        <h2 class="details-section-heading">Synopsis</h2>
+        <div class="synopsis-card" id="detailsSynopsis">
+          Loading synopsis...
+        </div>
+      </section>
+
+      <!-- Key Specs Grid -->
+      <section class="details-specs-grid">
+        <div class="spec-item">
+          <span class="spec-label">Format</span>
+          <span class="spec-value" id="specType">TV Series</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Status</span>
+          <span class="spec-value" id="specStatus">Ongoing</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Release Year</span>
+          <span class="spec-value" id="specYear">2024</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Audio / Subs</span>
+          <span class="spec-value" id="specAudio">Japanese, English</span>
+        </div>
+      </section>
+
+      <!-- Episodes List -->
+      <section class="episodes-container">
+        <h2 class="details-section-heading">Episodes</h2>
+        <div class="episodes-list" id="episodesList">
+          <!-- Injected via details.js -->
+        </div>
+      </section>
+
+      <!-- Characters & Voice Cast -->
+      <section>
+        <h2 class="details-section-heading">Characters & Voice Cast</h2>
+        <div class="characters-grid" id="charactersGrid">
+          <!-- Injected via details.js -->
+        </div>
+      </section>
+
+      <!-- Related / Recommended Anime -->
+      <section class="anime-section" style="padding-top: 20px;">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <div class="section-accent-bar"></div>
+            <h2 class="section-title">You Might Also Like</h2>
+          </div>
+          <div class="section-controls">
+            <button class="shelf-arrow-btn" onclick="scrollShelf('relatedShelf', 'left')" aria-label="Scroll left">
+              <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button class="shelf-arrow-btn" onclick="scrollShelf('relatedShelf', 'right')" aria-label="Scroll right">
+              <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="shelf-scroll-container" id="relatedShelf">
+          <!-- Injected via details.js -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="brand-logo">
+            <span class="brand-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </span>
+            Ani<span class="accent">WaveX</span>
+          </a>
+          <p>The premier educational anime streaming UI experience.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="browse.html">Browse</a></li>
+            <li><a href="browse.html?watchlist=true">My Watchlist</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 AniWaveX Inc. Educational training showcase.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/details.js"></script>
+</body>
+</html>

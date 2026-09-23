@@ -1,0 +1,233 @@
+/* ==========================================================================
+   AniWaveX - Authentication Styles (Login & Sign Up)
+   ========================================================================== */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+  background: radial-gradient(circle at 50% 20%, rgba(255, 100, 10, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, rgba(121, 40, 202, 0.06) 0%, transparent 50%),
+              var(--bg-primary);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-xl);
+  padding: 40px 36px;
+  box-shadow: var(--shadow-lg), 0 0 35px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 2;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-header .brand-logo {
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.auth-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--border-radius-sm);
+  padding: 12px 14px;
+  transition: all var(--transition-fast);
+}
+
+.form-input-wrap:focus-within {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.form-input-wrap.has-error {
+  border-color: var(--danger-red);
+}
+
+.form-input-wrap svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-muted);
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.form-input-wrap input {
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.password-toggle-btn {
+  color: var(--text-muted);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.form-error-msg {
+  font-size: 0.78rem;
+  color: var(--danger-red);
+  margin-top: 5px;
+  display: none;
+}
+
+.form-error-msg.visible {
+  display: block;
+}
+
+/* Password Strength Meter */
+.strength-meter-container {
+  margin-top: 8px;
+}
+
+.strength-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: all var(--transition-fast);
+}
+
+.strength-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Form Helpers */
+.form-helpers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.remember-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.remember-checkbox input {
+  accent-color: var(--accent-orange);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.forgot-link {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Quick Demo Box */
+.demo-login-box {
+  background: rgba(255, 100, 10, 0.08);
+  border: 1px dashed var(--accent-orange);
+  border-radius: var(--border-radius-sm);
+  padding: 12px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.demo-login-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.demo-login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--accent-orange);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.demo-login-btn:hover {
+  background: var(--accent-orange-hover);
+}
+
+/* Auth Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.auth-footer a {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
