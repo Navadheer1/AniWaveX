@@ -635,16 +635,25 @@ input, select, textarea {
 }
 
 /* ==========================================================================
-   HERO CAROUSEL SECTION
+/* ==========================================================================
+   HERO CAROUSEL SECTION (PREMIUM STREAMING DESIGN)
    ========================================================================== */
+
+/**
+ * 1. CONTAINER & TRACK ARCHITECTURE
+ * --------------------------------------------------------------------------
+ * - Height: 82vh (min 580px, max 820px) creates an immersive, cinematic scale.
+ * - Deep dark background (#0b0c0e) matches Crunchyroll / Netflix dark canvas.
+ * - Relative positioning establishes stacking context for multi-layered vignettes.
+ */
 .hero-carousel-section {
   position: relative;
   width: 100%;
-  height: 80vh;
-  min-height: 560px;
-  max-height: 780px;
+  height: 82vh;
+  min-height: 580px;
+  max-height: 820px;
   overflow: hidden;
-  background: var(--bg-primary);
+  background-color: #0b0c0e;
 }
 
 .hero-slider-track {
@@ -653,59 +662,148 @@ input, select, textarea {
   height: 100%;
 }
 
+/**
+ * 2. SLIDE & CROSSFADE ANIMATION
+ * --------------------------------------------------------------------------
+ * - Absolute stacking of slides allows buttery-smooth crossfading without layout jumps.
+ * - Visibility toggle ensures off-screen slides are excluded from keyboard focus/readers.
+ */
 .hero-slide {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
   display: flex;
   align-items: center;
+  z-index: 1;
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+              visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-slide.active {
   opacity: 1;
   visibility: visible;
+  z-index: 2;
 }
 
+/**
+ * 3. RIGHT-ANCHORED BACKDROP ARTWORK
+ * --------------------------------------------------------------------------
+ * - Anchored firmly to the right (width: 70%, right: 0) so character faces and
+ *   focal artwork remain visible without interfering with the typography on the left.
+ * - Subtle slow-motion Ken Burns scale effect adds cinematic prestige on active slide.
+ */
 .hero-backdrop-img {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: 70%;
   height: 100%;
   object-fit: cover;
+  object-position: center 22%;
   z-index: 1;
-  transform: scale(1.04);
-  transition: transform 6s ease-out;
+  pointer-events: none;
+  transform: scale(1.05);
+  transition: transform 7s cubic-bezier(0.1, 0, 0.1, 1);
 }
 
 .hero-slide.active .hero-backdrop-img {
   transform: scale(1);
 }
 
+/**
+ * 4. MULTI-DIRECTIONAL VIGNETTE OVERLAY (CRITICAL CONTRAST SYSTEM)
+ * --------------------------------------------------------------------------
+ * Three overlapping linear gradients solve the busy background problem:
+ * 
+ * 1) HORIZONTAL (90deg):
+ *    Solid #0b0c0e for 0% to 38% guarantees 100% text legibility with zero visual
+ *    noise under typography. Smoothly feathers through 55%-75% and becomes
+ *    fully transparent by 92% to preserve crisp character artwork on the right.
+ * 
+ * 2) BOTTOM VERTICAL (0deg):
+ *    Transitions up from solid #0b0c0e to seamlessly meld the hero backdrop
+ *    into the page body and video shelf rows below, eliminating harsh cutoffs.
+ * 
+ * 3) TOP VERTICAL (180deg):
+ *    Subtle dark scrim provides crisp contrast for the floating navigation bar
+ *    without tinting the artwork beneath.
+ */
 .hero-gradient-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 2;
-  background: linear-gradient(90deg, #0a0b0ef5 0%, #0a0b0ec4 45%, #0a0b0e40 80%, transparent 100%),
-              linear-gradient(180deg, transparent 60%, #0a0b0e 100%),
-              linear-gradient(0deg, #0a0b0ee6 0%, transparent 35%);
+  pointer-events: none;
+  background:
+    /* Top scrim for header clarity */
+    linear-gradient(180deg, rgba(11, 12, 14, 0.85) 0%, rgba(11, 12, 14, 0.3) 12%, transparent 22%),
+    /* Bottom fade blending into the page (#0b0c0e) */
+    linear-gradient(0deg, #0b0c0e 0%, rgba(11, 12, 14, 0.85) 14%, transparent 35%),
+    /* Heavy Left-to-Right vignette protecting typography */
+    linear-gradient(90deg, #0b0c0e 0%, #0b0c0e 38%, rgba(11, 12, 14, 0.85) 55%, rgba(11, 12, 14, 0.35) 75%, transparent 92%);
+}
+
+/**
+ * 5. CONTENT BLOCK & TYPOGRAPHY HIERARCHY
+ * --------------------------------------------------------------------------
+ * - Constrained strictly to max-width: 600px to maintain comfortable reading line lengths.
+ * - Staggered entrance animation introduces content smoothly on slide change.
+ */
+.hero-content-wrapper {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-top: calc(var(--nav-height) + 10px);
 }
 
 .hero-content {
-  position: relative;
-  z-index: 3;
-  max-width: 680px;
-  padding-top: var(--nav-height);
+  max-width: 600px;
+  width: 100%;
+  text-align: left;
 }
 
+/* Staggered slide-in animation for active slide content */
+.hero-slide.active .hero-badge-row {
+  animation: heroFadeSlideUp 0.5s ease-out 0.1s both;
+}
+.hero-slide.active .hero-title {
+  animation: heroFadeSlideUp 0.5s ease-out 0.18s both;
+}
+.hero-slide.active .hero-subtitle {
+  animation: heroFadeSlideUp 0.5s ease-out 0.24s both;
+}
+.hero-slide.active .hero-genres {
+  animation: heroFadeSlideUp 0.5s ease-out 0.3s both;
+}
+.hero-slide.active .hero-synopsis {
+  animation: heroFadeSlideUp 0.5s ease-out 0.36s both;
+}
+.hero-slide.active .hero-actions {
+  animation: heroFadeSlideUp 0.5s ease-out 0.42s both;
+}
+
+@keyframes heroFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/**
+ * 6. BADGES ROW
+ * --------------------------------------------------------------------------
+ */
 .hero-badge-row {
   display: flex;
   align-items: center;
@@ -714,90 +812,227 @@ input, select, textarea {
   margin-bottom: 14px;
 }
 
-.badge-featured {
-  background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   padding: 4px 10px;
   border-radius: 4px;
+  text-transform: uppercase;
 }
 
-.badge-subdub {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
+/* Bright Crunchyroll orange accent badge */
+.hero-badge-spotlight {
+  background: linear-gradient(135deg, #ff640a 0%, #e05200 100%);
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  box-shadow: 0 2px 10px rgba(255, 100, 10, 0.4);
 }
 
-.hero-rating {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--rating-gold);
-  font-size: 0.88rem;
-  font-weight: 700;
+.hero-badge-audio,
+.hero-badge-episodes {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e4e7ec;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.hero-rating svg {
-  width: 15px;
-  height: 15px;
+.hero-badge-rating {
+  background: rgba(255, 183, 3, 0.14);
+  color: #ffb703;
+  border: 1px solid rgba(255, 183, 3, 0.25);
+  font-weight: 800;
+}
+
+.hero-badge-rating svg {
+  width: 14px;
+  height: 14px;
   fill: currentColor;
 }
 
+.hero-badge-rating .rating-votes {
+  font-weight: 500;
+  color: rgba(255, 183, 3, 0.8);
+  font-size: 0.72rem;
+  margin-left: 2px;
+}
+
+/**
+ * 7. TITLE & SUBTITLE
+ * --------------------------------------------------------------------------
+ * - text-wrap: balance prevents single orphan words and awkward line splits.
+ * - Deep text-shadow ensures contrast even during rapid dynamic transitions.
+ */
 .hero-title {
-  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem);
   font-weight: 900;
   line-height: 1.12;
-  margin-bottom: 12px;
-  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.6px;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: break-word;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.85);
 }
 
-.hero-japanese-title {
-  font-size: 1.1rem;
-  color: var(--accent-orange);
+.hero-subtitle {
+  font-size: 1.05rem;
   font-weight: 600;
-  letter-spacing: 2px;
-  margin-bottom: 14px;
+  color: #ff640a;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0 0 14px 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
+/**
+ * 8. GENRE PILL TAGS
+ * --------------------------------------------------------------------------
+ */
 .hero-genres {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 16px;
 }
 
-.hero-genre-tag {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
+.hero-genre-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #a4aab9;
   background: rgba(255, 255, 255, 0.07);
-  padding: 3px 10px;
-  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 12px;
+  border-radius: 14px;
+  transition: all var(--transition-fast);
 }
 
+.hero-genre-pill:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/**
+ * 9. SYNOPSIS (STRICT 3-LINE CLAMPING)
+ * --------------------------------------------------------------------------
+ * - Restricted to exactly 3 lines with ellipsis.
+ * - Line-height and text color calibrated for clean scanning and zero eye fatigue.
+ */
 .hero-synopsis {
   font-size: 0.98rem;
-  color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 24px;
+  color: #b3b8c5;
+  margin: 0 0 24px 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
+/**
+ * 10. CALL TO ACTION BUTTONS
+ * --------------------------------------------------------------------------
+ * - Primary: Crunchyroll brand orange with energetic glow & lift.
+ * - Secondary: Modern translucent frosted-glass (backdrop-filter: blur(14px)).
+ * - Glass / Details: Subtle ghost style with hover border transition.
+ */
 .hero-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
-/* Hero Controls */
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 26px;
+  border-radius: 8px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  border: none;
+}
+
+.hero-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Primary "Watch Now" Button */
+.hero-btn-primary {
+  background: #ff640a;
+  color: #ffffff;
+  box-shadow: 0 4px 18px rgba(255, 100, 10, 0.4);
+}
+
+.hero-btn-primary:hover {
+  background: #ff7824;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(255, 100, 10, 0.55);
+}
+
+.hero-btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary "Add to Watchlist" Button (Frosted-Glass) */
+.hero-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.hero-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.38);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hero-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Details Ghost Glass Button */
+.hero-btn-glass {
+  background: rgba(18, 19, 25, 0.5);
+  color: #e4e7ec;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero-btn-glass:hover {
+  border-color: #ff640a;
+  color: #ff640a;
+  background: rgba(255, 100, 10, 0.1);
+  transform: translateY(-2px);
+}
+
+/**
+ * 11. CAROUSEL NAVIGATION CONTROLS (ARROWS & DOTS)
+ * --------------------------------------------------------------------------
+ */
 .hero-nav-arrow {
   position: absolute;
   top: 50%;
@@ -806,25 +1041,33 @@ input, select, textarea {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(18, 19, 25, 0.65);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
+  background: rgba(11, 12, 14, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
 }
 
 .hero-nav-arrow:hover {
-  background: var(--accent-orange);
-  color: #fff;
-  border-color: var(--accent-orange);
-  box-shadow: 0 0 16px var(--accent-glow);
+  background: #ff640a;
+  border-color: #ff640a;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 100, 10, 0.5);
+  transform: translateY(-50%) scale(1.08);
 }
 
-.hero-nav-arrow.prev { left: 24px; }
-.hero-nav-arrow.next { right: 24px; }
+.hero-nav-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.hero-nav-arrow.prev { left: 28px; }
+.hero-nav-arrow.next { right: 28px; }
 
 .hero-nav-arrow svg {
   width: 22px;
@@ -832,6 +1075,7 @@ input, select, textarea {
   fill: currentColor;
 }
 
+/* Pagination Dots */
 .hero-indicators {
   position: absolute;
   bottom: 24px;
@@ -841,6 +1085,12 @@ input, select, textarea {
   align-items: center;
   gap: 10px;
   z-index: 10;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(11, 12, 14, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .hero-dot {
@@ -848,14 +1098,20 @@ input, select, textarea {
   height: 10px;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.3);
-  transition: all var(--transition-fast);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
+  border: none;
+  padding: 0;
+}
+
+.hero-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .hero-dot.active {
   width: 32px;
-  background: var(--accent-orange);
-  box-shadow: 0 0 10px var(--accent-glow);
+  background: #ff640a;
+  box-shadow: 0 0 12px rgba(255, 100, 10, 0.65);
 }
 
 /* ==========================================================================
@@ -1482,8 +1738,22 @@ input, select, textarea {
     left: auto;
   }
   .hero-carousel-section {
-    height: 70vh;
-    min-height: 480px;
+    height: 75vh;
+    min-height: 520px;
+  }
+  .hero-backdrop-img {
+    width: 100%;
+    opacity: 0.45;
+  }
+  .hero-gradient-overlay {
+    background:
+      linear-gradient(180deg, rgba(11, 12, 14, 0.7) 0%, transparent 20%),
+      linear-gradient(0deg, #0b0c0e 0%, rgba(11, 12, 14, 0.95) 40%, rgba(11, 12, 14, 0.65) 100%);
+  }
+  .hero-content-wrapper {
+    padding-top: calc(var(--nav-height) + 16px);
+    align-items: flex-end;
+    padding-bottom: 50px;
   }
   .hero-content {
     max-width: 100%;
@@ -1529,7 +1799,9 @@ input, select, textarea {
     flex-direction: column;
     align-items: stretch;
   }
-  .hero-actions .btn {
+  .hero-actions .hero-btn {
+    width: 100%;
+  }
 }
 
 /* ==========================================================================

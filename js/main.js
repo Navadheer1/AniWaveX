@@ -407,127 +407,301 @@ function scrollShelf(containerId, direction) {
 }
 
 // ==========================================================================
-// HOME PAGE HERO CAROUSEL CONTROLLER
 // ==========================================================================
+// HOME PAGE HERO CAROUSEL CONTROLLER (CRUNCHYROLL STREAMING STANDARD)
+// ==========================================================================
+
+/**
+ * Curated list of the 5 Spotlight Anime Showcase Objects
+ * Strictly using the user-provided images from the images/ folder:
+ * 1. Demon Slayer: Kimetsu no Yaiba  -> images/demon-slayer.jpg
+ * 2. Solo Leveling                   -> images/Sololeveling.jpg
+ * 3. One Piece                       -> images/OnePiece.jpeg
+ * 4. Naruto                          -> images/naruto.jpg
+ * 5. Jujutsu Kaisen                  -> images/jujustu kaisen.webp
+ */
+const SPOTLIGHT_ANIME = [
+  {
+    id: "demon-slayer-kimetsu-no-yaiba",
+    title: "Demon Slayer: Kimetsu no Yaiba",
+    japaneseTitle: "鬼滅の刃",
+    subtitle: "鬼滅の刃 • Hashira Training Arc",
+    score: 4.92,
+    ratingCount: "320k",
+    episodesCount: 63,
+    language: "Sub | Dub",
+    genres: ["Action", "Fantasy", "Historical", "Shonen"],
+    synopsis: "Tanjiro Kamado's peaceful life is shattered when demons slaughter his entire family, leaving only his sister Nezuko turned into a demon. Determined to find a cure and avenge his loved ones, Tanjiro joins the Demon Slayer Corps, mastering the breath of water and uncovering the ancient secret of the Sun Breathing technique.",
+    banner: "images/demon-slayer.jpg"
+  },
+  {
+    id: "solo-leveling",
+    title: "Solo Leveling",
+    japaneseTitle: "俺だけレベルアップな件",
+    subtitle: "俺だけレベルアップな件 • Season 1",
+    score: 4.88,
+    ratingCount: "189k",
+    episodesCount: 12,
+    language: "Sub | Dub",
+    genres: ["Action", "Fantasy", "Adventure", "Supernatural"],
+    synopsis: "In a world where mysterious gates connect modern Earth to dungeons crawling with monstrous beasts, awakened humans known as Hunters risk their lives for glory and wealth. Sung Jinwoo, notoriously mocked as the Weakest Hunter of All Mankind, is fatally wounded inside a deadly double dungeon—only to wake up as the sole player chosen by an enigmatic System.",
+    banner: "images/Sololeveling.jpg"
+  },
+  {
+    id: "one-piece",
+    title: "One Piece",
+    japaneseTitle: "ワンピース",
+    subtitle: "ワンピース • Egghead Island Arc",
+    score: 4.96,
+    ratingCount: "540k",
+    episodesCount: 1100,
+    language: "Sub | Dub",
+    genres: ["Action", "Adventure", "Fantasy", "Shonen"],
+    synopsis: "Monkey D. Luffy refuses to let anyone or anything stand in the way of his quest to become King of the Pirates. With a course charted for the treacherous waters of the Grand Line and beyond, Luffy and his loyal Straw Hat Pirates brave legendary warlords, tyrannical admirals, and the supreme mystery left behind by Gol D. Roger.",
+    banner: "images/OnePiece.jpeg"
+  },
+  {
+    id: "naruto-shippuden",
+    title: "Naruto",
+    japaneseTitle: "ナルト 疾風伝",
+    subtitle: "ナルト 疾風伝 • Fourth Shinobi War",
+    score: 4.87,
+    ratingCount: "490k",
+    episodesCount: 500,
+    language: "Sub | Dub",
+    genres: ["Action", "Adventure", "Martial Arts", "Shonen"],
+    synopsis: "After two and a half years of rigorous training on the road with Master Jiraiya, Naruto Uzumaki returns to the Hidden Leaf Village stronger, wiser, and more driven than ever. But dangerous shadows loom on the horizon as the rogue criminal syndicate Akatsuki moves to seize the Nine-Tails sealed deep inside him.",
+    banner: "images/naruto.jpg"
+  },
+  {
+    id: "jujutsu-kaisen",
+    title: "Jujutsu Kaisen",
+    japaneseTitle: "呪術廻戦",
+    subtitle: "呪術廻戦 • Shibuya Incident",
+    score: 4.90,
+    ratingCount: "295k",
+    episodesCount: 47,
+    language: "Sub | Dub",
+    genres: ["Action", "Dark Fantasy", "Supernatural", "Shonen"],
+    synopsis: "Yuji Itadori is an exceptionally athletic high school student who swallows a cursed talisman—the finger of the legendary King of Curses, Ryomen Sukuna—to protect his friends. Drawn into the secret, lethal society of Jujutsu Sorcerers at Tokyo Jujutsu High, Yuji must track down all twenty fingers while confronting terrifying special-grade curses.",
+    banner: "images/jujustu kaisen.webp"
+  }
+];
+
 let heroCurrentIndex = 0;
 let heroAutoPlayInterval = null;
+const HERO_AUTOPLAY_DELAY = 6000; // 6 seconds auto-advance
 
+/**
+ * Initializes the Hero Component:
+ * 1. Uses strictly the 5 spotlight anime with user-provided artwork from images/.
+ * 2. Injects semantic HTML markup with right-anchored artwork and multi-gradient vignette.
+ * 3. Mounts pagination indicator dots and arrow navigation.
+ * 4. Starts the 6-second auto-play loop with hover-pause listeners.
+ */
 async function initHeroCarousel() {
   const track = document.getElementById('heroTrack');
   const indicatorsContainer = document.getElementById('heroIndicators');
   if (!track || !indicatorsContainer) return;
 
-  let featuredAnime = [];
+  // Resolve dataset: strictly use the 5 user-specified spotlight anime and images
+  const featuredAnime = SPOTLIGHT_ANIME.map(item => {
+    const local = window.ANIME_DATABASE ? window.ANIME_DATABASE.find(a => a.id === item.id) : null;
+    return {
+      ...item,
+      // Strictly use the specified banner from the images/ folder
+      bannerImg: item.banner,
+      rating: item.score || (local ? local.rating : 4.9),
+      ratingCount: item.ratingCount || (local ? `${Math.round(local.ratingCount / 1000)}k` : '100k'),
+      episodesCount: item.episodesCount || (local ? local.episodesCount : 24),
+      language: item.language || 'Sub | Dub'
+    };
+  });
 
-  // Attempt to fetch trending / popular from Jikan API
-  if (window.JikanAPI && typeof window.JikanAPI.getTrendingAnime === 'function') {
-    try {
-      const liveAnime = await window.JikanAPI.getTrendingAnime();
-      if (liveAnime && liveAnime.length >= 3) {
-        featuredAnime = liveAnime.slice(0, 5);
-      }
-    } catch (e) {
-      console.warn('[Hero] Falling back to local data:', e);
-    }
-  }
-
-  // Graceful fallback to local dataset if API returned empty
-  if (featuredAnime.length === 0 && window.ANIME_DATABASE) {
-    featuredAnime = window.ANIME_DATABASE.filter(a => a.featured).slice(0, 5);
-  }
   if (featuredAnime.length === 0) return;
 
-  // Build slides
+  // 1. Build Slides HTML Structure
   track.innerHTML = featuredAnime.map((anime, index) => {
-    const animeId = String(anime.id || anime.mal_id);
-    const inWatchlist = Storage.isInWatchlist(animeId);
-    const scoreVal = typeof anime.rating === 'number' ? anime.rating.toFixed(2) : '4.85';
-    const votesStr = (anime.ratingCount > 1000) ? `${(anime.ratingCount / 1000).toFixed(0)}k` : '15k';
+    const animeId = String(anime.id);
+    const inWatchlist = typeof Storage !== 'undefined' && typeof Storage.isInWatchlist === 'function' 
+      ? Storage.isInWatchlist(animeId) 
+      : false;
+    const scoreVal = typeof anime.rating === 'number' ? anime.rating.toFixed(2) : String(anime.score || '4.90');
 
     return `
-      <div class="hero-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
-        <img class="hero-backdrop-img" src="${anime.banner || anime.poster}" alt="${anime.title}">
-        <div class="hero-gradient-overlay"></div>
-        <div class="container hero-content">
-          <div class="hero-badge-row">
-            <span class="badge-featured">Jikan Live Spotlight</span>
-            <span class="badge-subdub">${anime.language || 'Sub | Dub'}</span>
-            <span class="badge-subdub">${anime.episodesCount || 24} Episodes</span>
-            <div class="hero-rating">
-              <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              ${scoreVal} (${votesStr} votes)
+      <div class="hero-slide ${index === 0 ? 'active' : ''}" data-index="${index}" role="group" aria-roledescription="slide" aria-label="${index + 1} of ${featuredAnime.length}">
+        <!-- Right-anchored anime backdrop artwork -->
+        <img class="hero-backdrop-img" src="${anime.bannerImg}" alt="${anime.title} Backdrop Artwork" loading="${index === 0 ? 'eager' : 'lazy'}">
+        
+        <!-- Multi-directional vignette overlay: dark left fade, bottom fade, top scrim -->
+        <div class="hero-gradient-overlay" aria-hidden="true"></div>
+        
+        <!-- Left-aligned content container (max-width: 600px) -->
+        <div class="container hero-content-wrapper">
+          <div class="hero-content">
+            
+            <!-- Badge row -->
+            <div class="hero-badge-row">
+              <span class="hero-badge hero-badge-spotlight">SPOTLIGHT</span>
+              <span class="hero-badge hero-badge-audio">${anime.language}</span>
+              <span class="hero-badge hero-badge-episodes">${anime.episodesCount} Episodes</span>
+              <div class="hero-badge hero-badge-rating">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                </svg>
+                <span>${scoreVal}</span>
+                <span class="rating-votes">(${anime.ratingCount})</span>
+              </div>
             </div>
-          </div>
-          <h1 class="hero-title">${anime.title}</h1>
-          <div class="hero-japanese-title">${anime.japaneseTitle || ''}</div>
-          <div class="hero-genres">
-            ${(anime.genres || []).map(g => `<span class="hero-genre-tag">${g}</span>`).join('')}
-          </div>
-          <p class="hero-synopsis">${anime.synopsis || ''}</p>
-          <div class="hero-actions">
-            <a href="watch.html?id=${encodeURIComponent(animeId)}&ep=1" class="btn btn-primary btn-lg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              Watch S1 E1
-            </a>
-            <button class="btn btn-secondary btn-lg" onclick="handleHeroWatchlistToggle('${animeId}', this)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-              <span class="wl-text">${inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
-            </button>
-            <a href="details.html?id=${encodeURIComponent(animeId)}" class="btn btn-outline btn-lg">Details</a>
+
+            <!-- Large main title -->
+            <h1 class="hero-title">${anime.title}</h1>
+
+            <!-- Optional Japanese / Season Subtitle -->
+            <h3 class="hero-subtitle">${anime.subtitle || anime.japaneseTitle || ''}</h3>
+
+            <!-- Genre pill tags -->
+            <div class="hero-genres">
+              ${(anime.genres || []).map(g => `<span class="hero-genre-pill">${g}</span>`).join('')}
+            </div>
+
+            <!-- Synopsis clamped strictly to 3 lines -->
+            <p class="hero-synopsis">${anime.synopsis}</p>
+
+            <!-- Call-to-action buttons -->
+            <div class="hero-actions">
+              <a href="watch.html?id=${encodeURIComponent(animeId)}&ep=1" class="hero-btn hero-btn-primary" aria-label="Watch ${anime.title} Now">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span>Watch Now</span>
+              </a>
+              <button type="button" class="hero-btn hero-btn-secondary" onclick="handleHeroWatchlistToggle('${animeId}', this)" aria-label="${inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span class="wl-text">${inWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
+              </button>
+              <a href="details.html?id=${encodeURIComponent(animeId)}" class="hero-btn hero-btn-glass" aria-label="View Details of ${anime.title}">
+                <span>Details</span>
+              </a>
+            </div>
+
           </div>
         </div>
       </div>
     `;
   }).join('');
 
-  // Build dots
+  // 2. Build Bottom Carousel Navigation Indicators (Pagination Dots)
   indicatorsContainer.innerHTML = featuredAnime.map((_, index) => `
-    <div class="hero-dot ${index === 0 ? 'active' : ''}" onclick="goToHeroSlide(${index})"></div>
+    <button type="button" 
+      class="hero-dot ${index === 0 ? 'active' : ''}" 
+      data-index="${index}" 
+      aria-label="Navigate to spotlight slide ${index + 1} of ${featuredAnime.length}"
+      onclick="goToHeroSlide(${index})">
+    </button>
   `).join('');
 
+  // 3. Connect Previous / Next Arrow Controls
+  const prevBtn = document.querySelector('.hero-nav-arrow.prev');
+  const nextBtn = document.querySelector('.hero-nav-arrow.next');
+
+  if (prevBtn) {
+    prevBtn.onclick = (e) => {
+      e.preventDefault();
+      prevHeroSlide();
+      startHeroAutoplay();
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = (e) => {
+      e.preventDefault();
+      nextHeroSlide();
+      startHeroAutoplay();
+    };
+  }
+
+  // 4. Start 6-Second Auto-play with Pause on Hover
   startHeroAutoplay();
 
   const carouselSection = document.querySelector('.hero-carousel-section');
   if (carouselSection) {
     carouselSection.addEventListener('mouseenter', stopHeroAutoplay);
     carouselSection.addEventListener('mouseleave', startHeroAutoplay);
+    // Keyboard accessibility for arrows
+    carouselSection.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        prevHeroSlide();
+        startHeroAutoplay();
+      } else if (e.key === 'ArrowRight') {
+        nextHeroSlide();
+        startHeroAutoplay();
+      }
+    });
   }
 }
 
+/**
+ * Handles Watchlist Toggle from Hero Secondary Button
+ */
 function handleHeroWatchlistToggle(animeId, btn) {
-  const added = Storage.toggleWatchlist(animeId);
-  const textEl = btn.querySelector('.wl-text');
-  if (textEl) {
-    textEl.textContent = added ? 'In Watchlist' : 'Add to Watchlist';
+  if (typeof Storage !== 'undefined' && typeof Storage.toggleWatchlist === 'function') {
+    const added = Storage.toggleWatchlist(animeId);
+    const textEl = btn.querySelector('.wl-text');
+    if (textEl) {
+      textEl.textContent = added ? 'In Watchlist' : 'Add to Watchlist';
+    }
   }
 }
 
-function goToHeroSlide(index) {
+/**
+ * Crossfades smoothly to the specified slide index
+ * @param {number} targetIndex - The index of the slide to activate
+ */
+function goToHeroSlide(targetIndex) {
   const slides = document.querySelectorAll('.hero-slide');
   const dots = document.querySelectorAll('.hero-dot');
   if (slides.length === 0) return;
 
-  slides.forEach(s => s.classList.remove('active'));
-  dots.forEach(d => d.classList.remove('active'));
+  // Deactivate current slide & dot
+  slides[heroCurrentIndex]?.classList.remove('active');
+  dots[heroCurrentIndex]?.classList.remove('active');
 
-  heroCurrentIndex = (index + slides.length) % slides.length;
-  slides[heroCurrentIndex].classList.add('active');
-  if (dots[heroCurrentIndex]) dots[heroCurrentIndex].classList.add('active');
+  // Compute circular index bounds
+  heroCurrentIndex = (targetIndex + slides.length) % slides.length;
+
+  // Activate target slide & dot
+  slides[heroCurrentIndex]?.classList.add('active');
+  dots[heroCurrentIndex]?.classList.add('active');
 }
 
+/**
+ * Advances to the next spotlight slide
+ */
 function nextHeroSlide() {
   goToHeroSlide(heroCurrentIndex + 1);
 }
 
+/**
+ * Reverts to the previous spotlight slide
+ */
 function prevHeroSlide() {
   goToHeroSlide(heroCurrentIndex - 1);
 }
 
+/**
+ * Starts or resets the 6-second auto-advance timer
+ */
 function startHeroAutoplay() {
   stopHeroAutoplay();
-  heroAutoPlayInterval = setInterval(nextHeroSlide, 5500);
+  heroAutoPlayInterval = setInterval(nextHeroSlide, HERO_AUTOPLAY_DELAY);
 }
 
+/**
+ * Pauses the auto-advance timer (e.g. on mouse hover or touch)
+ */
 function stopHeroAutoplay() {
   if (heroAutoPlayInterval) {
     clearInterval(heroAutoPlayInterval);
